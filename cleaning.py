@@ -24,10 +24,11 @@ phrases = data["Phrase"]
 #print(data.loc[:, "Sentiment"])
 #print(data[["Sentiment"]])
 
+# Creates a n by m word matrix of n phrases and m unique words.
+# matrix = CountVectorizer(max_features=1000)
+# X = matrix.fit_transform(data).toarray()
+# print(X)
 
-matrix = CountVectorizer(max_features=1000)
-X = matrix.fit_transform(data).toarray()
-print(X)
 # Output: number of times each unique word appears in each phrase
 # [[0 1 0 0]
 #  [0 0 1 0]
@@ -50,23 +51,22 @@ stop_words = list(stopwords.words('english'))
 custom_words = ['genre', 'film']
 stop_words = set(stop_words).union(set(custom_words))
 # Initialize a list of proper nouns, given in the nltk Words package. Filter out proper nouns.
-good_words = list(words.words())
-# stop_words = set(stop_words).union(set(noun_words))
+good_words = set(list(words.words()))
 
-# result = []
-# for phrase in cleaned:
-#     temp = []
-#     for word in phrase:
-#         if not word in stop_words:
-#             temp.append(word)
-#     result.append(temp)
+result = []
+for phrase in cleaned:
+    temp = []
+    for word in phrase:
+        if not word in stop_words:
+            temp.append(word)
+    result.append(temp)
 
 #print(result)
 
-# with open('firstclean.txt', 'w') as f:
-#     for item in result:
-#         f.write("%s\n" % item)
-# f.close()
+with open('firstclean.txt', 'w') as f:
+    for item in result:
+        f.write("%s\n" % item)
+f.close()
 
 # Second cleaning
 result = []
@@ -77,15 +77,12 @@ for phrase in cleaned:
             temp.append(word)
     result.append(temp)
 
-print(result)
+#print(result)
 
 with open('secondclean.txt', 'w') as f:
     for item in result:
         f.write("%s\n" % item)
 f.close()
-# f = open("secondclean.txt", "w+")
-# f.write(result)
-# f.close()
 
 
 
