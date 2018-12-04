@@ -1,0 +1,35 @@
+SENTIMENT ANALYSIS
+==================
+This project builds a model that predicts sentiment levels of a phrase, using webscraped movie reviews collected by Pang and Lee.
+
+
+
+----------------------------------------
+Table of Contents
+----------------------------------------
+cleaning.py
+naive_bayes.py
+BoW.py
+train.csv
+
+
+
+----------------------------------------
+File Description
+----------------------------------------
+cleaning.py removes unimportant characters from the train data.
+
+naive_bayes.py trains a NB classifier using the train data.
+
+BoW.py uses Bag of Words model to score unique words in each phrase.
+
+train.csv contains the corpus of labeled train data,
+which are phrases with their labeled sentiment.
+
+
+----------------------------------------
+References
+----------------------------------------
+Bo Pang and Lillian Lee. Seeing stars: Exploiting class relationships for sentiment categorization with respect to
+rating scales. In ACL 2005, 43rd Annual Meeting of the Association for Computational Linguistics, Proceedings
+of the Conference, 25-30 June 2005, University of Michigan, USA, pages 115–124, 2005.
