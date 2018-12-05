@@ -1,4 +1,5 @@
 # Implement the bag of words model for feature extraction, using nltk's countvectorizer package.
+# Then implement Logistic Regression with built-in K-fold CV.
 # Includes timer for cleaning and training time.
 
 from sklearn.feature_extraction.text import CountVectorizer
@@ -42,7 +43,11 @@ print("Feature extracting finished in " + str(elapsed_time_extract) + " seconds"
 
 # Train logistic regression model with built-in K-fold CV.
 start_time_train = timeit.default_timer()
-param_grid = {'C': [0.001, 0.01, 0.1, 1, 10]}
+# Try a variety of C-values
+# param_grid = {'C': [0.001, 0.01, 0.1, 1, 10]}
+param_grid = {'C': [0.6, 0.8, 1, 2]}
+# see hwk3-1 for optimal C value
+# 5-fold CV because 10-fold takes too long
 grid = GridSearchCV(LogisticRegression(), param_grid, cv=5)
 grid.fit(X_train, labels)
 elapsed_time_train = timeit.default_timer() - start_time_train
@@ -50,7 +55,7 @@ print("Training finished in " + str(elapsed_time_train) + " seconds")
 
 # Print Cross Validation estimates and optimal parameters.
 print("Best cross-validation score: {:.2f}".format(grid.best_score_))
-print("Best parameters: ", grid.best_params_)
+print("Best parameters: ", grid.best_params_) # Output best parameter
 print("Best estimator: ", grid.best_estimator_)
 
 # Creates a n by m word matrix of n phrases and m unique words.
