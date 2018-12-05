@@ -44,8 +44,9 @@ print("Feature extracting finished in " + str(elapsed_time_extract) + " seconds"
 # Train logistic regression model with built-in K-fold CV.
 start_time_train = timeit.default_timer()
 # Try a variety of C-values
-# param_grid = {'C': [0.001, 0.01, 0.1, 1, 10]}
-param_grid = {'C': [0.6, 0.8, 1, 2]}
+#param_grid = {'C': [0.001, 0.01, 0.1, 1, 10]} # best is 1
+#param_grid = {'C': [0.6, 0.8, 1, 2]} # best is 2
+param_grid = {'C': [1, 1.5, 2, 2.5]} # best is 2
 # see hwk3-1 for optimal C value
 # 5-fold CV because 10-fold takes too long
 grid = GridSearchCV(LogisticRegression(), param_grid, cv=5)

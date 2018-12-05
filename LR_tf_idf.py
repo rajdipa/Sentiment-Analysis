@@ -9,6 +9,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 import cleaning
 import timeit
+import numpy
 
 # You must un-tokenize the words back into phrases before running the model.
 def untokenize(texts):
@@ -38,7 +39,17 @@ print("Cleaning finished in " + str(elapsed_time_clean) + " seconds")
 # Tf-idf model to extract features.
 start_time_extract = timeit.default_timer()
 transformer = TfidfTransformer(smooth_idf=False)
-X_train = transformer.fit_transform(result) # X_train.toarray()
+
+# EXAMPLE YIELDS TypeError: no supported conversion for types: (dtype('<U8'),)
+# example = [['wow', 'blisss'],['test',
+# 'exciting']]
+# print(transformer.fit_transform(example))
+
+result = untokenize(result)
+result = numpy.array(result)
+result = result.reshape(-1, 1) # convert to 2D array
+
+X_train = transformer.fit(result).transform(result) # X_train.toarray()
 elapsed_time_extract = timeit.default_timer() - start_time_extract
 print("Feature extracting finished in " + str(elapsed_time_extract) + " seconds")
 
