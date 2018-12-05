@@ -101,22 +101,21 @@ def filter_data(d):
 
 
 
+# MAIN : not run if file is imported. only run if called directly
+if __name__ == "__main__":
+    # Get data
+    phrases = read_data("train.csv", "Phrase")
+    labels = read_data("train.csv", "Sentiment")
+    # Tokenize and clean
+    cleaned = tokenize_data(phrases)
+    # Deemed unhelpful, so we commented this part out:
+    # cleaned = stem_data(cleaned)
+    # Filter out non-sentimental words
+    result = filter_data(cleaned)
 
-# MAIN------------------------------------
-
-# Get data
-phrases = read_data("train.csv", "Phrase")
-labels = read_data("train.csv", "Sentiment")
-# Tokenize and clean
-cleaned = tokenize_data(phrases)
-# Deemed unhelpful, so we commented this part out:
-# cleaned = stem_data(cleaned)
-# Filter out non-sentimental words
-result = filter_data(cleaned)
-
-# Generate the pickle file
-generate_cleaned_file(result, labels)
-dataset = open_cleaned_file('preprocessed_train_data.pkl')
-print(type(dataset))
-print(dataset)
-print(len(result)) # 109,242
+    # Generate the pickle file
+    generate_cleaned_file(result, labels)
+    dataset = open_cleaned_file('preprocessed_train_data.pkl')
+    print(type(dataset))
+    print(dataset)
+    print(len(result)) # 109,242
