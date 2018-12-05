@@ -51,68 +51,72 @@ def open_cleaned_file(fileName):
     pkl.close()
     return result
 
+# Tokenize and filter out non-alphanumeric characters.
+def tokenize_data(d):
+    # Initialize RegExp tokenizer.
+    tokenizer = rt(r'\w+')
+    # Make all words lowercase.
+    d = (phrase.lower() for phrase in d)
+    d = (tokenizer.tokenize(phrase) for phrase in d)
+    tokenized = []
+    for phrase in d:
+        tokenized.append(phrase)
+    # print_result('cleaned.txt', result)
+    return tokenized
+
+# Stem words.
+# Ex: [swim, swims, swimming] -> [swim]
+def stem_data(d):
+    # Initialize lemmatizer: "stem" similar words.
+    stemmer = WordNetLemmatizer()
+    stemmed = []
+    for phrase in d:
+        temp = []
+        for word in phrase:
+            temp.append(stemmer.lemmatize(word))
+        stemmed.append(temp)
+    #print_result('stemmed.txt', result)
+    return stemmed
+
+# Filter out prepositions, conjunctions, keep adjectives, nouns.
+def filter_data(d):
+    # Initialize stopwords list: remove articles, conjunctions, prepositions, pronouns.
+    # stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+    stop_words = list(stopwords.words('english'))
+    # Additional non-sentimental words to filter out
+    custom_words = ['genre', 'film', 'movie']
+    stop_words = set(stop_words).union(set(custom_words))
+    # Second cleaning
+    # Initialize dictionary of useful words from nltk corpus
+    good_words = set(list(words.words()))
+    result = []
+    for phrase in d:
+        temp = []
+        for word in phrase:
+            if word in good_words and not word in stop_words:
+                temp.append(word)
+        result.append(temp)
+    # print_result('secondclean.txt', result)
+    return result
+
+
+
+
 # MAIN------------------------------------
 
 # Get data
 phrases = read_data("train.csv", "Phrase")
 labels = read_data("train.csv", "Sentiment")
+# Tokenize and clean
+cleaned = tokenize_data(phrases)
+# Deemed unhelpful, so we commented this part out:
+# cleaned = stem_data(cleaned)
+# Filter out non-sentimental words
+result = filter_data(cleaned)
 
-# Initialize RegExp tokenizer: filter out non-alphanumeric characters.
-tokenizer = rt(r'\w+')
-# Make all lowercase.
-phrases = (phrase.lower() for phrase in phrases)
-phrases = (tokenizer.tokenize(phrase) for phrase in phrases)
-cleaned = []
-for phrase in phrases:
-    cleaned.append(phrase)
-# print_result('cleaned.txt', result)
-
-# Initialize lemmatizer: "stem" similar words.
-# Ex: [swim, swims, swimming] -> [swim]
-# Deemed unhelpful, so we commented this part out.
-# stemmer = WordNetLemmatizer()
-# stemmed = []
-# for phrase in cleaned:
-#     temp = []
-#     for word in phrase:
-#         temp.append(stemmer.lemmatize(word))
-#     stemmed.append(temp)
-# print_result('stemmed.txt', result)
-
-# First cleaning
-# Initialize stopwords list: remove articles, conjunctions, prepositions, pronouns.
-# stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
-stop_words = list(stopwords.words('english'))
-# Additional non-sentimental words to filter out
-custom_words = ['genre', 'film', 'movie']
-stop_words = set(stop_words).union(set(custom_words))
-
-# result = []
-# for phrase in cleaned:
-#     temp = []
-#     for word in phrase:
-#         if not word in stop_words:
-#             temp.append(word)
-#     result.append(temp)
-# print_result('firstclean.txt', result)
-
-# Second cleaning
-# Initialize dictionary of useful words from nltk corpus
-good_words = set(list(words.words()))
-
-result = []
-for phrase in cleaned:
-    temp = []
-    for word in phrase:
-        if word in good_words and not word in stop_words:
-            temp.append(word)
-    result.append(temp)
-# print_result('secondclean.txt', result)
-
-Generate the pickle file
+# Generate the pickle file
 generate_cleaned_file(result, labels)
 dataset = open_cleaned_file('preprocessed_train_data.pkl')
 print(type(dataset))
 print(dataset)
 print(len(result)) # 109,242
-
