@@ -1,95 +1,21 @@
+# Extract extra features. Positive, negative, and the ratio of positive to negative words in each phrase.
+
+import cleaning # cleaning.py contains various functions
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
-#import cleaning
 import timeit
 import pandas as pd
+import numpy as np
 import re
 from nltk.tokenize import RegexpTokenizer as rt
 from nltk.corpus import stopwords
 from nltk.corpus import words
-# from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import WordNetLemmatizer
 import pickle as rick
-
 from scipy.sparse import csr_matrix,csc_matrix,hstack
 
-def read_data(fName, colName):
-    data = pd.read_csv(fName)
-    return data[colName]
-
-# Output result of cleaning into a txt file, by the name of fname
-# resultlist is a list of lists, the items in the inner list are strings
-def print_result(fName, resultlist):
-    with open(fName, 'w') as f:
-        for l in result:
-            f.write("%s\n" % l)
-    f.close()
-
-# Dump the preprocessed data into a pickle file
-def generate_cleaned_file(instances, labels):
-    col = ["Phrases", "Sentiment"]
-    i = range(len((instances)))
-    dataframe = pd.DataFrame(columns = col, index = i)
-    dataframe["Phrases"] = instances
-    dataframe["Sentiment"] = labels
-    pkfile = open('preprocessed_train_data.pkl', 'wb')
-    rick.dump(dataframe, pkfile)
-    pkfile.close()
-
-# Open the pickle file
-def open_cleaned_file(fileName):
-    pkl = open(fileName, 'rb')
-    result = rick.load(pkl)
-    pkl.close()
-    return result
-
-# Tokenize and filter out non-alphanumeric characters.
-def tokenize_data(d):
-    # Initialize RegExp tokenizer.
-    tokenizer = rt(r'\w+')
-    # Make all words lowercase.
-    d = (phrase.lower() for phrase in d)
-    d = (tokenizer.tokenize(phrase) for phrase in d)
-    tokenized = []
-    for phrase in d:
-        tokenized.append(phrase)
-    # print_result('cleaned.txt', result)
-    return tokenized
-
-def untokenize(texts):
-    docs = []
-    for doc in texts:
-        temp = ""
-        for word in doc:
-            temp += word + " "
-        docs.append(temp)
-    return docs
-
-def filter_data(d):
-    stop_words = list(stopwords.words('english'))
-    # Additional non-sentimental words to filter out
-    custom_words = ['genre', 'film', 'movie']
-    stop_words = set(stop_words).union(set(custom_words))
-    # Second cleaning
-    # Initialize dictionary of useful words from nltk corpus
-    good_words = set(list(words.words()))
-    result = []
-    for phrase in d:
-        temp = []
-        for word in phrase:
-            if word in good_words and not word in stop_words:
-                temp.append(word)
-        result.append(temp)
-    # print_result('secondclean.txt', result)
-    return result
-
-phrases = read_data("train.csv", "Phrase")
-labels = read_data("train.csv", "Sentiment")
-
-cleaned = tokenize_data(phrases)
-result = filter_data(cleaned)
 
 def demo_liu_hu_lexicon(sentence):
 
@@ -117,6 +43,20 @@ def demo_liu_hu_lexicon(sentence):
     p_n_rat = pos_words/neg_words
     return p_n_rat,pos_words,neg_words
 
+def untokenize(texts):
+    docs = []
+    for doc in texts:
+        temp = ""
+        for word in doc:
+            temp += word + " "
+        docs.append(temp)
+    return docs
+
+
+phrases = cleaning.read_data("train.csv", "Phrase")
+labels = cleaning.read_data("train.csv", "Sentiment")
+cleaned = cleaning.tokenize_data(phrases)
+result = cleaning.filter_data(cleaned)
 
 ratio_feat = []
 pos_feat = []
@@ -138,7 +78,7 @@ new_pos = pos_col.reshape(2000,1)
 new_neg = neg_col.reshape(2000,1)
 
 vect = CountVectorizer(min_df=2, ngram_range=(0, 30))
-X_train = vect.fit(untokenize(result)).transform(untokenize(result))
+X_train = vect.fit(untokenize(result[:2000])).transform(untokenize(result[:2000]))
 feature_names = vect.get_feature_names()
 print("Number of features: {}".format(len(feature_names)))
 
