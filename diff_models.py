@@ -1,17 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
-#import cleaning
-import timeit
-import pandas as pd
-import re
-from nltk.tokenize import RegexpTokenizer as rt
-from nltk.corpus import stopwords
-from nltk.corpus import words
-from nltk.tokenize import sent_tokenize, word_tokenize
-import numpy as np
 import cleaning
 
 def untokenize(texts):
