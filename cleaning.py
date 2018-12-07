@@ -99,7 +99,15 @@ def filter_data(d):
     # print_result('secondclean.txt', result)
     return result
 
-
+# You must un-tokenize the words back into phrases before running the model.
+def untokenize(texts):
+    docs = []
+    for doc in texts:
+        temp = ""
+        for word in doc:
+            temp += word + " "
+        docs.append(temp)
+    return docs
 
 # MAIN : not run if file is imported. only run if called directly
 if __name__ == "__main__":
