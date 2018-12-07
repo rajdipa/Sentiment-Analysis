@@ -4,23 +4,43 @@ import training
 import cleaning
 import pandas as pd
 import numpy as np
+import pickle as rick
+import os.path
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer
-# Call function that builds model on train.csv and uses it to test data.
+from sklearn.linear_model import LogisticRegression
 
-model = training.main()
-vect = CountVectorizer(min_df=2, ngram_range=(0, 30))
+# Check whether model has been built already.
+if not (os.path.exists('dumped_model_LR.pkl')):
+    # Call function that builds model on train.csv and uses it to test data.
+    training.main()
 
-phrases = cleaning.read_data("testset_1.csv", "Phrase")
-ids = cleaning.read_data("testset_1.csv", "PhraseId")
-tokenized = cleaning.tokenize_data(phrases)
-filtered = cleaning.filter_data(tokenized)
-prepared = training.untokenize(filtered)
-testdata = vect.fit_transform(prepared)
+# Open saved model.
+model = 0
+with open('dumped_model_LR.pkl', 'rb') as f:
+    model = rick.load(f)
 
-predictions = model.predict(testdata)
+# Read in test data.
+test_phrases = cleaning.read_data("testset_1.csv", "Phrase")
+test_ids = cleaning.read_data("testset_1.csv", "PhraseId")
 
-data = create_df(ids, predictions)
+# Clean test data.
+test_phrases = cleaning.tokenize_data(test_phrases)
+test_phrases = cleaning.filter_data(test_phrases)
+test_phrases = training.untokenize(test_phrases)
+test_phrases = np.array(test_phrases)
+#test_phrases = test_phrases.reshape(-1,1)
+#test_phrases = test_phrases.reshape(109242,1)
+# Counts phrases between 0 through 30 words.
+#vect = CountVectorizer(min_df=2, ngram_range=(0, 30))
+#test_phrases = vect.transform(test_phrases)
+print(test_phrases.shape)
+#print(test_phrases.shape[1])
+test_phrases = test_phrases.reshape(1,-1)
+# Predict labels on test data.
+predictions = model.predict(test_phrases) # ValueError: X has 1 features per sample; expecting 170735
+
+#data = create_df(ids, predictions)
 df = pd.DataFrame({'PhraseId':np.array(ids),'Sentiment':np.array(predictions)})
-outfile = "ChowdhuryLiWang.csv"
+outfile = "output.csv"
 df.to_csv(outfile, index=False)

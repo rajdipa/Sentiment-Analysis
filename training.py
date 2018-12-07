@@ -2,11 +2,14 @@
 # Then implement Logistic Regression with built-in K-fold CV.
 # Includes timer for cleaning and training time.
 
+# Call training.main() from the calling file, which will be predict.py
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 import cleaning
 import timeit
+import pickle as rick
 
 # You must un-tokenize the words back into phrases before running the model.
 def untokenize(texts):
@@ -36,7 +39,8 @@ def main():
     # Bag of Words model to extract features.
     start_time_extract = timeit.default_timer()
     vect = CountVectorizer(min_df=2, ngram_range=(1, 30))
-    X_train = vect.fit(untokenize(result)).transform(untokenize(result))
+    result = untokenize(result)
+    X_train = vect.fit(result).transform(result)
     elapsed_time_extract = timeit.default_timer() - start_time_extract
     print("Feature extracting finished in " + str(elapsed_time_extract) + " seconds")
 
@@ -48,7 +52,7 @@ def main():
     #param_grid = {'C': [0.6, 0.8, 1, 2]} # best is 2
     #param_grid = {'C': [5, 7, 9, 11, 13]} # best is 5 for cv=10
     param_grid = {'C': [2]}
-    # Use 5-fold CV because 10-fold takes too long
+    # Use 5-fold CV because 10-fold takes too long.
     grid = GridSearchCV(LogisticRegression(), param_grid, cv=5)
     grid.fit(X_train, labels)
     elapsed_time_train = timeit.default_timer() - start_time_train
@@ -60,4 +64,8 @@ def main():
     # print("Best estimator: ", grid.best_estimator_)
 
     # Retrun the LR model
-    return grid.best_estimator_ 
+    # return grid.best_estimator_
+
+    # Save model into pickle file to be used later.
+    with open('dumped_model_LR.pkl', 'wb') as f:
+        rick.dump(grid.best_estimator_, f)
