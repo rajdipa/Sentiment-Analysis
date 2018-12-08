@@ -46,7 +46,6 @@ def main():
     #param_grid = {'C': [0.6, 0.8, 1, 2]} # best is 2
     #param_grid = {'C': [5, 7, 9, 11, 13]} # best is 5 for cv=10
     param_grid = {'C': [2]}
-    # Use 5-fold CV because 10-fold takes too long.
     grid = GridSearchCV(LogisticRegression(), param_grid, cv=5)
     grid.fit(train_phrases, train_labels)
     elapsed_time_train = timeit.default_timer() - start_time_train
