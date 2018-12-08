@@ -11,15 +11,6 @@ import cleaning
 import timeit
 import numpy
 
-# You must un-tokenize the words back into phrases before running the model.
-def untokenize(texts):
-    docs = []
-    for doc in texts:
-        temp = ""
-        for word in doc:
-            temp += word + " "
-        docs.append(temp)
-    return docs
 
 # MAIN -----------------------------------------------
 
@@ -30,7 +21,7 @@ labels = cleaning.read_data("train.csv", "Sentiment")
 # Tokenize and clean
 start_time_clean = timeit.default_timer()
 cleaned = cleaning.tokenize_data(phrases)
-# cleaned = stem_data(cleaned)
+# cleaned = cleaning.stem_data(cleaned)
 result = cleaning.filter_data(cleaned)
 elapsed_time_clean = timeit.default_timer() - start_time_clean
 print("Cleaning finished in " + str(elapsed_time_clean) + " seconds")
@@ -40,12 +31,7 @@ print("Cleaning finished in " + str(elapsed_time_clean) + " seconds")
 start_time_extract = timeit.default_timer()
 transformer = TfidfTransformer(smooth_idf=False)
 
-# EXAMPLE YIELDS TypeError: no supported conversion for types: (dtype('<U8'),)
-# example = [['wow', 'blisss'],['test',
-# 'exciting']]
-# print(transformer.fit_transform(example))
-
-result = untokenize(result)
+result = cleaning.untokenize(result)
 result = numpy.array(result)
 result = result.reshape(-1, 1) # convert to 2D array
 
