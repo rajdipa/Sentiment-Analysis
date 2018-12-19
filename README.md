@@ -3,7 +3,9 @@ Sentiment Analysis Project
 Authors
 ----------------------------------------
 Chowdhury Rajdipa
+
 Li Sherri
+
 Wang Jerry
 
 
@@ -18,26 +20,30 @@ $ pip3 install scikit-learn
 $ pip3 install scipy
 
 3. Go into python3 environment and run
-> nltk.download('stopwords')
-> nltk.download('punkt')
-> nltk.download('words')
-> nltk.download('opinion_lexicon')
-and other necessary packages if errors appear.
+```
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('words')
+nltk.download('opinion_lexicon')
+```
+and other necessary packages when errors appear.
 
 
 
 Training the Model and using the Model
 ----------------------------------------
 Clone the repository to your machine.
-
+```
 $ cd SentimentAnalysis/scripts
 $ python3 training_testing_LR_NB.py
 $ python3 predict.py
-
+```
 
 You can view the cleaned data by running
+```
 $ python3 cleaning.py
-
+```
 You may substitute python with python3 if python is your path variable to running python3.
 Some users with both python2 and python3 must type python3.
 
